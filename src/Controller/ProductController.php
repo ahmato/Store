@@ -7,7 +7,6 @@ use App\Entity\Product;
 use App\Form\ProductFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -51,8 +50,43 @@ use Symfony\Component\Routing\Attribute\Route;
         return $this->render('product/create.html.twig', ['form' => $form->createView()]);
     }
 
+    #[Route('/product/edit/{id}', name: 'edit_product')]
+    public function edite(int $id, Request $request): Response
+    {
+        $product = $this->productRepository->find($id);
+
+        if (!$product) {
+            return $this->json(['error: Product not found', Response::HTTP_NOT_FOUND]);
+        }
+
+        $form = $this->createForm(ProductFormType::class, $product);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $this->entityManager->flush();
+            return $this->redirectToRoute('products');
+        }
+
+        return $this->render('product/edit.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/product/delete/{id}', name: 'delete_product', methods: ['GET','DELETE'])]
+    public function delete(int $id, Request $request): Response
+    {
+        $product = $this->productRepository->find($id);
+
+        $this->entityManager->remove($product);
+        $this->entityManager->flush();
+
+        return $this->redirectToRoute('products');
+    }
+
     #[Route('/product/{id}', name: 'show-product', defaults: ['name' => null], methods: ['GET'])]
-    public function showProduct(string $id): JsonResponse|Response
+    public function show(string $id): JsonResponse|Response
     {
         if (!$id) {
             return $this->json(['error: Product name is required. ', Response::HTTP_BAD_REQUEST]);
@@ -69,8 +103,7 @@ use Symfony\Component\Routing\Attribute\Route;
         ]);
     }
 
-
-    #[Route('/product/{name}/{price}', methods: 'GET'), ]
+    #[Route('/products/{name}/{price}', methods: 'GET'), ]
     public function getProductByNameAndPrice(string $name, float $price): JsonResponse
     {
         if (empty($name) || empty($price)) {
