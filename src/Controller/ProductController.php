@@ -4,9 +4,12 @@ namespace App\Controller;
 
 use AllowDynamicProperties;
 use App\Entity\Product;
+use App\Form\ProductFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -17,7 +20,7 @@ use Symfony\Component\Routing\Attribute\Route;
         $this->productRepository = $this->entityManager->getRepository(Product::class);
     }
 
-    #[Route('/products', name: 'products', methods: ['GET', 'HEAD'])]
+    #[Route('/', name: 'products', methods: ['GET', 'HEAD'])]
     public function index(): Response
     {
         $products = $this->productRepository->findBy([], ['id' => 'DESC']);
@@ -25,6 +28,27 @@ use Symfony\Component\Routing\Attribute\Route;
         return $this->render('product/index.html.twig', [
             'products' => $products,
         ]);
+    }
+
+    #[Route('/product/create', name: 'create_product')]
+    public function create(Request $request): Response
+    {
+        $product = new Product();
+        $form = $this->createForm(ProductFormType::class, $product);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $newProduct = $form->getData();
+
+            $this->entityManager->persist($newProduct);
+            $this->entityManager->flush();
+
+            return $this->redirectToRoute('products');
+        }
+
+        return $this->render('product/create.html.twig', ['form' => $form->createView()]);
     }
 
     #[Route('/product/{id}', name: 'show-product', defaults: ['name' => null], methods: ['GET'])]
@@ -44,6 +68,7 @@ use Symfony\Component\Routing\Attribute\Route;
             'product' => $product,
         ]);
     }
+
 
     #[Route('/product/{name}/{price}', methods: 'GET'), ]
     public function getProductByNameAndPrice(string $name, float $price): JsonResponse

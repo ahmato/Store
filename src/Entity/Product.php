@@ -11,33 +11,32 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 class Product
 {
-    public function __construct(
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
 
-        #[ORM\Id]
-        #[ORM\GeneratedValue]
-        #[ORM\Column]
-        private int $id,
+    #[ORM\Column(length: 255)]
+    private string $name;
 
-        #[ORM\Column(length: 255)]
-        private string       $name,
+    #[ORM\ManyToMany(targetEntity: Customer::class, mappedBy: 'products')]
+    private Collection $customers;
 
-        #[ORM\ManyToMany(targetEntity: customer::class, mappedBy: 'products')]
-        private Collection   $customers = new ArrayCollection(),
+    #[ORM\Column]
+    private int $stock = 0;
 
-        #[ORM\Column]
-        private int          $stock = 0,
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $description = null;
 
-        #[ORM\Column(length: 255, nullable: true)]
-        private ?string      $description = null,
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
+    private ?string $price = null;
 
-        #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
-        private ?string      $price = null,
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $imagePath = null;
 
-        #[ORM\Column(length: 255, nullable: true)]
-        private ?string      $imagePath = null,
-
-    )
+    public function __construct()
     {
+        $this->customers = new ArrayCollection();
     }
 
     public function getId(): ?int
