@@ -27,26 +27,25 @@ use Symfony\Component\Routing\Attribute\Route;
         ]);
     }
 
-    #[Route('/product/{name}', name: 'product', defaults: ['name' => null], methods: ['GET'])]
-    public function product(string $name): JsonResponse
+    #[Route('/product/{id}', name: 'show-product', defaults: ['name' => null], methods: ['GET'])]
+    public function showProduct(string $id): JsonResponse|Response
     {
-        if (!$name) {
+        if (!$id) {
             return $this->json(['error: Product name is required. ', Response::HTTP_BAD_REQUEST]);
         }
 
-        $product = $this->productRepository->findOneBy([]);
+        $product = $this->productRepository->find($id);
 
         if (!$product) {
             return $this->json(['error: Product not found', Response::HTTP_NOT_FOUND]);
         }
 
-        return $this->json([
-            'message' => 'Welcome to your new controller! => ' . $name,
-            'path' => 'src/Controller/ProductController.php',
+        return $this->render('product/show.html.twig', [
+            'product' => $product,
         ]);
     }
 
-    #[Route('/products/{name}/{price}', methods: 'GET'), ]
+    #[Route('/product/{name}/{price}', methods: 'GET'), ]
     public function getProductByNameAndPrice(string $name, float $price): JsonResponse
     {
         if (empty($name) || empty($price)) {
