@@ -16,7 +16,7 @@ class customer
         #[ORM\Id]
         #[ORM\GeneratedValue]
         #[ORM\Column]
-        private readonly int $id,
+        private int $id,
 
         #[ORM\Column(length: 255)]
         private string       $name,
@@ -25,7 +25,7 @@ class customer
         private string       $email,
 
         #[ORM\ManyToMany(targetEntity: Product::class, inversedBy: 'customers')]
-        private Collection   $products,
+        private Collection   $products = new ArrayCollection(),
 
         #[ORM\Column(length: 255, nullable: true)]
         private ?string      $address = null,
@@ -35,7 +35,6 @@ class customer
 
     )
     {
-        $this->products = New ArrayCollection();
     }
 
     public function getId(): int

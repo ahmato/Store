@@ -16,13 +16,13 @@ class Product
         #[ORM\Id]
         #[ORM\GeneratedValue]
         #[ORM\Column]
-        private readonly int $id,
+        private int $id,
 
         #[ORM\Column(length: 255)]
         private string       $name,
 
         #[ORM\ManyToMany(targetEntity: customer::class, mappedBy: 'products')]
-        private Collection   $customers,
+        private Collection   $customers = new ArrayCollection(),
 
         #[ORM\Column]
         private int          $stock = 0,
@@ -38,7 +38,6 @@ class Product
 
     )
     {
-        $this->customers = new ArrayCollection();
     }
 
     public function getId(): ?int

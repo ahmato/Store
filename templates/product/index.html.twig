@@ -9,7 +9,10 @@
      {% if products %}
 
          {% for product in products %}
-             <li>{{ product }}</li>
+             <li>{{ product.name }}</li>
+             <li>{{ product.description }}</li>
+             <li>{{ product.price }}</li>
+             <li>{{ product.stock }}</li>
          {% endfor %}
 
      {% else %}
