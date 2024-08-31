@@ -88,10 +88,6 @@ use Symfony\Component\Routing\Attribute\Route;
     #[Route('/product/{id}', name: 'show-product', defaults: ['name' => null], methods: ['GET'])]
     public function show(string $id): JsonResponse|Response
     {
-        if (!$id) {
-            return $this->json(['error: Product name is required. ', Response::HTTP_BAD_REQUEST]);
-        }
-
         $product = $this->productRepository->find($id);
 
         if (!$product) {

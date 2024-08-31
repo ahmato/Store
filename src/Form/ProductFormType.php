@@ -10,6 +10,10 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\GreaterThan;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Positive;
+use Symfony\Component\Validator\Constraints\Range;
 
 class ProductFormType extends AbstractType
 {
@@ -31,6 +35,10 @@ class ProductFormType extends AbstractType
                     'placeholder' => 'Enter stock quantity'
                 ],
                 'required' => true,
+                'constraints' => [
+                    new Positive(),
+                    new Range(['min' => 0])
+                ]
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'Description',
@@ -49,6 +57,11 @@ class ProductFormType extends AbstractType
                     'placeholder' => 'Enter price'
                 ],
                 'required' => true,
+                'constraints' => [
+                    new NotBlank(),
+                    new GreaterThan(['value' => 0])
+                ],
+                'help' => 'Please enter the price in EUR.'
             ])
         ;
     }
