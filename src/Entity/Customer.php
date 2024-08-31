@@ -11,30 +11,31 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: CustomerRepository::class)]
 class Customer
 {
-    public function __construct(
+
 
         #[ORM\Id]
         #[ORM\GeneratedValue]
         #[ORM\Column]
-        private int $id,
+        private ?int $id = null;
 
         #[ORM\Column(length: 255)]
-        private string       $name,
+        private string       $name;
 
         #[ORM\Column(length: 255)]
-        private string       $email,
+        private string       $email;
 
         #[ORM\ManyToMany(targetEntity: Product::class, inversedBy: 'customers')]
-        private Collection   $products = new ArrayCollection(),
+        private Collection   $products;
 
         #[ORM\Column(length: 255, nullable: true)]
-        private ?string      $address = null,
+        private ?string      $address = null;
 
         #[ORM\Column(length: 255, nullable: true)]
-        private ?string      $phone = null,
+        private ?string      $phone = null;
 
-    )
+    public function __construct( )
     {
+        $this->products = new ArrayCollection();
     }
 
     public function getId(): int
@@ -87,7 +88,7 @@ class Customer
         return $this->products;
     }
 
-    public function addProducts(Product $product): self
+    public function addProduct(Product $product): self
     {
         if (!$this->products->contains($product)) {
             $this->products->add($product);

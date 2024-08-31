@@ -11,32 +11,29 @@ class CustomerFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        $customer1 = new Customer(
-            id: 0,
-            name: 'John Doe',
-            email: 'john.doe@example.com',
-            address: '123 Elm Street, Springfield',
-            phone: '555-1234'
-        );
+        $productRepo = $manager->getRepository(Product::class);
+        $product1 = $productRepo->findOneBy(['name' => 'Laptop']);
+        $product2 = $productRepo->findOneBy(['name' => 'Smartphone']);
 
-        $customer2 = new Customer(
-            id: 0,
-            name: 'Jane Smith',
-            email: 'jane.smith@example.com',
-            address: '456 Oak Avenue, Springfield',
-            phone: '555-5678'
-        );
-
-        $product1 = $manager->getRepository(Product::class)->find(1);
-        $product2 = $manager->getRepository(Product::class)->find(2);
-
+        $customer1 = new Customer();
+        $customer1->setName('John Doe');
+        $customer1->setEmail('john.doe@example.com');
+        $customer1->setAddress('123 Elm Street, Springfield');
+        $customer1->setPhone('555-1234');
         if ($product1) {
-            $customer1->addProducts($product1);
-            $customer2->addProducts($product1);
+            $customer1->addProduct($product1);
+        }
+        if ($product2) {
+            $customer1->addProduct($product2);
         }
 
-        if ($product2) {
-            $customer1->addProducts($product2);
+        $customer2 = new Customer();
+        $customer2->setName('Jane Smith');
+        $customer2->setEmail('jane.smith@example.com');
+        $customer2->setAddress('456 Oak Avenue, Springfield');
+        $customer2->setPhone('555-5678');
+        if ($product1) {
+            $customer2->addProduct($product1);
         }
 
         $manager->persist($customer1);

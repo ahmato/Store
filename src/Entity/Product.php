@@ -113,7 +113,7 @@ class Product
     {
         if (!$this->customers->contains($customer)) {
             $this->customers->add($customer);
-            $customer->addProducts($this);
+            $customer->addProduct($this);
         }
 
         return $this;
