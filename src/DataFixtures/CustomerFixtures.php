@@ -27,7 +27,7 @@ class CustomerFixtures extends Fixture
             $customer1->addProduct($product2);
         }
 
-        $customer2 = new Customer();
+        $customer2 = new Customer  ();
         $customer2->setName('Jane Smith');
         $customer2->setEmail('jane.smith@example.com');
         $customer2->setAddress('456 Oak Avenue, Springfield');
