@@ -73,7 +73,7 @@
                                 class="inline-block text-gray-300 no-underline hover:text-gray-200 hover:text-underline py-2 px-4"
                                 href="/movies"
                                 @click="isOpen = false"
-                        >Movies
+                        >Products
                         </a>
                     </li>
 
@@ -89,9 +89,9 @@
                     <li class="mr-3">
                         <a
                                 class="inline-block text-gray-300 no-underline hover:text-gray-200 hover:text-underline py-2 px-4"
-{#                                href="/{{app.user ? 'logout' : 'login'}}"#}
+                                href="/{{app.user ? 'logout' : 'login'}}"
                                 @click="isOpen = false">
-{#                            {{ app.user ? 'Logout' : 'Login' }}#}
+                            {{ app.user ? 'Logout' : 'Login' }}
                         </a>
                     </li>
                 </ul>
@@ -105,7 +105,7 @@
 {% block footer %}
     <footer class="bg-gray-600 py-6 mt-20">
         <p class="w-25 w-4/5 text-center pb-3 m-auto text-base text-gray-100 pt-6">
-            Copyright 2021 Code With Dary. All Rights Reserved
+            Products Store
         </p>
     </footer>
 {% endblock %}
