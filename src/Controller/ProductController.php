@@ -29,7 +29,7 @@ use Symfony\Component\Routing\Attribute\Route;
         ]);
     }
 
-    #[Route('/product/create', name: 'create_product')]
+    #[Route('/product/create', name: 'create_product', methods: ['GET', 'POST'])]
     public function create(Request $request): Response
     {
         $product = new Product();
@@ -39,9 +39,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $newProduct = $form->getData();
-
-            $this->entityManager->persist($newProduct);
+            $this->entityManager->persist($product);
             $this->entityManager->flush();
 
             return $this->redirectToRoute('products');
@@ -51,7 +49,7 @@ use Symfony\Component\Routing\Attribute\Route;
     }
 
     #[Route('/product/edit/{id}', name: 'edit_product')]
-    public function edite(int $id, Request $request): Response
+    public function edit(int $id, Request $request): Response
     {
         $product = $this->productRepository->find($id);
 
@@ -60,7 +58,6 @@ use Symfony\Component\Routing\Attribute\Route;
         }
 
         $form = $this->createForm(ProductFormType::class, $product);
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -74,10 +71,14 @@ use Symfony\Component\Routing\Attribute\Route;
         ]);
     }
 
-    #[Route('/product/delete/{id}', name: 'delete_product', methods: ['GET','DELETE'])]
-    public function delete(int $id, Request $request): Response
+    #[Route('/product/delete/{id}', name: 'delete_product', methods: ['POST'])]
+    public function delete(int $id): Response
     {
         $product = $this->productRepository->find($id);
+
+        if (!$product) {
+            throw $this->createNotFoundException('Product not found');
+        }
 
         $this->entityManager->remove($product);
         $this->entityManager->flush();
@@ -85,15 +86,9 @@ use Symfony\Component\Routing\Attribute\Route;
         return $this->redirectToRoute('products');
     }
 
-    #[Route('/product/{id}', name: 'show-product', defaults: ['name' => null], methods: ['GET'])]
-    public function show(string $id): JsonResponse|Response
+    #[Route('/product/{id}', name: 'show-product', methods: ['GET'])]
+    public function show(Product $product): Response
     {
-        $product = $this->productRepository->find($id);
-
-        if (!$product) {
-            return $this->json(['error: Product not found', Response::HTTP_NOT_FOUND]);
-        }
-
         return $this->render('product/show.html.twig', [
             'product' => $product,
         ]);
@@ -113,6 +108,6 @@ use Symfony\Component\Routing\Attribute\Route;
             return $this->json(['error: Product not found', Response::HTTP_NOT_FOUND]);
         }
 
-        return $this->json($products);
+        return $this->json($products, Response::HTTP_OK);
     }
 }
