@@ -6,11 +6,14 @@ use AllowDynamicProperties;
 use App\Entity\Product;
 use App\Form\ProductFormType;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Cache\CacheItemInterface;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Cache\CacheInterface;
 
 #[AllowDynamicProperties] class ProductController extends AbstractController
 {
@@ -19,10 +22,18 @@ use Symfony\Component\Routing\Attribute\Route;
         $this->productRepository = $this->entityManager->getRepository(Product::class);
     }
 
+
+    /**
+     * @throws InvalidArgumentException
+     */
     #[Route('/', name: 'products', methods: ['GET', 'HEAD'])]
-    public function index(): Response
+    public function index(CacheInterface $cache): Response
     {
-        $products = $this->productRepository->findBy([], ['id' => 'DESC']);
+//        $products = $this->productRepository->findBy([], ['id' => 'DESC']);
+        $products = $cache->get('product_index', function (CacheItemInterface $cacheItem) {
+            $cacheItem->expiresAfter(5);
+            return $this->productRepository->findAll();
+        });
 
         return $this->render('product/index.html.twig', [
             'products' => $products,
@@ -87,22 +98,30 @@ use Symfony\Component\Routing\Attribute\Route;
     }
 
     #[Route('/product/{id}', name: 'show-product', methods: ['GET'])]
-    public function show(Product $product): Response
+    public function show(Product $product, CacheInterface $cache,): Response
     {
         return $this->render('product/show.html.twig', [
             'product' => $product,
         ]);
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     #[Route('/products/{name}/{price}', methods: 'GET'), ]
-    public function getProductByNameAndPrice(string $name, float $price): JsonResponse
+    public function getProductByNameAndPrice(string $name, float $price, CacheInterface $cache): JsonResponse
     {
         if (empty($name) || empty($price)) {
             return $this->json([
                 'error: product name and price are required', Response::HTTP_BAD_REQUEST]);
         }
 
-        $products = $this->productRepository->findProductsByNameAndPrice($name, $price);
+//        $products = $this->productRepository->findProductsByNameAndPrice($name, $price);
+
+        $products = $cache->get('product_' . $name, function () use ($name, $price) {
+
+            return $this->productRepository->findProductsByNameAndPrice($name, $price);
+        });
 
         if (!$products) {
             return $this->json(['error: Product not found', Response::HTTP_NOT_FOUND]);

@@ -17,3 +17,6 @@ framework:
         # Namespaced pools use the above "app" backend by default
         #pools:
             #my.dedicated.cache: null
+
+        #  Don't store the cache in the FilesystemAdapter, it only lives for the duration of the request.
+      app: cache.adapter.array
