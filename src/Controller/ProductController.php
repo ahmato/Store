@@ -5,6 +5,7 @@ namespace App\Controller;
 use AllowDynamicProperties;
 use App\Entity\Product;
 use App\Form\ProductFormType;
+use App\Service\EmailService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\InvalidArgumentException;
@@ -17,7 +18,7 @@ use Symfony\Contracts\Cache\CacheInterface;
 
 #[AllowDynamicProperties] class ProductController extends AbstractController
 {
-    public function __construct(private EntityManagerInterface $entityManager)
+    public function __construct(private EntityManagerInterface $entityManager,private EmailService $mailerService)
     {
         $this->productRepository = $this->entityManager->getRepository(Product::class);
     }
@@ -100,6 +101,12 @@ use Symfony\Contracts\Cache\CacheInterface;
     #[Route('/product/{id}', name: 'show-product', methods: ['GET'])]
     public function show(Product $product, CacheInterface $cache,): Response
     {
+        $this->mailerService->sendEmail(
+            'gotipa7825@coloruz.com',
+            'Test Subject',
+            'This is the email body for creating product.'
+        );
+
         return $this->render('product/show.html.twig', [
             'product' => $product,
         ]);
