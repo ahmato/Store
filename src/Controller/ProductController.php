@@ -18,7 +18,7 @@ use Symfony\Contracts\Cache\CacheInterface;
 
 #[AllowDynamicProperties] class ProductController extends AbstractController
 {
-    public function __construct(private EntityManagerInterface $entityManager,private EmailService $mailerService)
+    public function __construct(private EntityManagerInterface $entityManager, private EmailService $mailerService)
     {
         $this->productRepository = $this->entityManager->getRepository(Product::class);
     }
@@ -30,7 +30,6 @@ use Symfony\Contracts\Cache\CacheInterface;
     #[Route('/', name: 'products', methods: ['GET', 'HEAD'])]
     public function index(CacheInterface $cache): Response
     {
-//        $products = $this->productRepository->findBy([], ['id' => 'DESC']);
         $products = $cache->get('product_index', function (CacheItemInterface $cacheItem) {
             $cacheItem->expiresAfter(5);
             return $this->productRepository->findAll();
@@ -122,8 +121,6 @@ use Symfony\Contracts\Cache\CacheInterface;
             return $this->json([
                 'error: product name and price are required', Response::HTTP_BAD_REQUEST]);
         }
-
-//        $products = $this->productRepository->findProductsByNameAndPrice($name, $price);
 
         $products = $cache->get('product_' . $name, function () use ($name, $price) {
 

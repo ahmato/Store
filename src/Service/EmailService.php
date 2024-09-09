@@ -9,7 +9,7 @@ use Symfony\Component\Mime\Email;
 class EmailService
 {
 
-    public function __construct(private MailerInterface $mailer,private string $defaultSenderEmail)
+    public function __construct(private MailerInterface $mailer, private string $defaultSenderEmail)
     {
     }
 
