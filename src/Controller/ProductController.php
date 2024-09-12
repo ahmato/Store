@@ -100,11 +100,11 @@ use Symfony\Contracts\Cache\CacheInterface;
     #[Route('/product/{id}', name: 'show-product', methods: ['GET'])]
     public function show(Product $product, CacheInterface $cache,): Response
     {
-        $this->mailerService->sendEmail(
-            'gotipa7825@coloruz.com',
-            'Test Subject',
-            'This is the email body for creating product.'
-        );
+//        $this->mailerService->sendEmail(
+//            'gotipa7825@coloruz.com',
+//            'Test Subject',
+//            'This is the email body for creating product.'
+//        );
 
         return $this->render('product/show.html.twig', [
             'product' => $product,

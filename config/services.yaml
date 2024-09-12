@@ -27,3 +27,8 @@ services:
     App\Service\EmailService:
         arguments:
             $defaultSenderEmail: '%env(DEFAULT_SENDER_EMAIL)%'
+
+
+    App\EventListener\ProductPurchaseEmailNotificationListener:
+        tags:
+            - { name: 'kernel.event_listener', event: 'product.purchase', method: 'onProductPurchased' }

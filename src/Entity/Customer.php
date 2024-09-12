@@ -8,7 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 
 //TODO: add the repository
-#[ORM\Entity(repositoryClass: CustomerRepository::class)]
+//#[ORM\Entity(repositoryClass: CustomerRepository::class)]
+#[ORM\Entity()]
 class Customer
 {
 

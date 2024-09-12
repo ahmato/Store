@@ -8,7 +8,6 @@ use Symfony\Component\Mime\Email;
 
 class EmailService
 {
-
     public function __construct(private MailerInterface $mailer, private string $defaultSenderEmail)
     {
     }
@@ -23,8 +22,7 @@ class EmailService
             ->to($to)
             ->subject($subject)
             ->text($body)
-            ->html('<p>Sending emails with <strong>Store</strong> and <strong>Mailtrap</strong>!</p>');
-
+            ->html('<p>' . nl2br($body) . '</p>');
 
         $this->mailer->send($email);
     }
