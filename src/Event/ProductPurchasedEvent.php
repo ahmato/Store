@@ -8,7 +8,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class ProductPurchasedEvent extends Event
 {
-    public const NAME = 'product_purchase';
+    public const NAME = 'product.purchase';
     public function __construct(private Product $product, private Customer $customer)
     {
     }

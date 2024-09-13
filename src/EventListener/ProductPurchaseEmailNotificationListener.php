@@ -8,7 +8,8 @@ use JetBrains\PhpStorm\NoReturn;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
-#[AsEventListener(event: ProductPurchasedEvent::NAME, method: 'onProductPurchased')]
+// This can be used instead of the configuration in services.yaml
+//#[AsEventListener(event: ProductPurchasedEvent::NAME, method: 'onProductPurchased')]
 class ProductPurchaseEmailNotificationListener
 {
     public function __construct(private EmailService $emailService)
