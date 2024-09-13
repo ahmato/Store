@@ -15,14 +15,15 @@ class CustomerFixtures extends Fixture
         $faker = Factory::create();
 
         $productRepo = $manager->getRepository(Product::class);
-        $product1 = $productRepo->findOneBy(['name' => 'Laptop']);
-        $product2 = $productRepo->findOneBy(['name' => 'Smartphone']);
+        $product1 = $productRepo->findOneBy(['id' => 1]);
+        $product2 = $productRepo->findOneBy(['id' => 2]);
 
         $customer1 = new Customer();
         $customer1->setName($faker->name);
         $customer1->setEmail($faker->email);
         $customer1->setAddress($faker->address);
         $customer1->setPhone($faker->phoneNumber);
+
         if ($product1) {
             $customer1->addProduct($product1);
         }
